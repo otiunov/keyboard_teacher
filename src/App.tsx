@@ -2,12 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import {
   advanceNumberLesson,
   createNumberLessonState,
+  getNumberKeyPresentation,
   submitNumberAnswer,
 } from './lesson'
 import { getLanguageOptions, getSessionCopy, type Language } from './session'
 import { speakText } from './speech'
-
-type KeyState = 'idle' | 'highlighted-target'
 
 const numberRows = [
   ['1', '2', '3', '4', '5'],
@@ -175,13 +174,17 @@ function App() {
           {numberRows.map((row, rowIndex) => (
             <div className="keyboard-row" key={rowIndex}>
               {row.map((value) => {
-                const state: KeyState =
-                  value === lesson.target ? 'highlighted-target' : 'idle'
+                const presentation = getNumberKeyPresentation(lesson, value)
+                const keyClassName = [
+                  'key-button',
+                  presentation.isHighlighted ? 'key-button--highlighted-target' : 'key-button--idle',
+                  `key-button--${presentation.feedbackState}`,
+                ].join(' ')
 
                 return (
                   <button
                     key={value}
-                    className={`key-button key-button--${state}`}
+                    className={keyClassName}
                     type="button"
                     onClick={() => handleKeyPress(value)}
                   >

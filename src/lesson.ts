@@ -1,7 +1,14 @@
 export type NumberLessonPhase = 'prompt' | 'correct' | 'incorrect'
+export type NumberKeyFeedbackState = 'idle' | 'correct' | 'incorrect'
+
+export interface NumberKeyPresentation {
+  isHighlighted: boolean
+  feedbackState: NumberKeyFeedbackState
+}
 
 export interface NumberLessonState {
   target: string
+  highlightedKey: string
   lastKey: string | null
   feedback: string
   pendingAdvance: boolean
@@ -17,8 +24,11 @@ function pickDigit(random: () => number) {
 }
 
 export function createNumberLessonState(random: () => number = Math.random): NumberLessonState {
+  const target = pickDigit(random)
+
   return {
-    target: pickDigit(random),
+    target,
+    highlightedKey: target,
     lastKey: null,
     feedback: 'Tap the glowing key',
     pendingAdvance: false,
@@ -57,11 +67,38 @@ export function advanceNumberLesson(
     return state
   }
 
+  const target = pickDigit(random)
+
   return {
-    target: pickDigit(random),
+    target,
+    highlightedKey: target,
     lastKey: null,
     feedback: 'Tap the glowing key',
     pendingAdvance: false,
     phase: 'prompt',
+  }
+}
+
+export function getNumberKeyPresentation(
+  state: NumberLessonState,
+  key: string,
+): NumberKeyPresentation {
+  if (state.lastKey === key && state.phase === 'correct') {
+    return {
+      isHighlighted: key === state.highlightedKey,
+      feedbackState: 'correct',
+    }
+  }
+
+  if (state.lastKey === key && state.phase === 'incorrect') {
+    return {
+      isHighlighted: key === state.highlightedKey,
+      feedbackState: 'incorrect',
+    }
+  }
+
+  return {
+    isHighlighted: key === state.highlightedKey,
+    feedbackState: 'idle',
   }
 }

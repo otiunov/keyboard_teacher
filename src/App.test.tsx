@@ -65,6 +65,17 @@ describe('App', () => {
     expect(screen.getByText(/tap the glowing key/i)).toBeInTheDocument()
   })
 
+  it('highlights only the active target key while the prompt is waiting', () => {
+    render(<App />)
+
+    const highlightedKeys = screen
+      .getAllByRole('button')
+      .filter((button) => button.classList.contains('key-button--highlighted-target'))
+
+    expect(highlightedKeys).toHaveLength(1)
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+  })
+
   it('speaks the current target when the lesson screen loads', () => {
     render(<App />)
 
@@ -95,6 +106,7 @@ describe('App', () => {
     )
     expect(screen.getByText(/last key:/i).parentElement).toHaveTextContent('Last key: 3')
     expect(screen.getByText('Good job')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--correct')
   })
 
   it('speaks retry encouragement after the child clicks the wrong key', async () => {
@@ -116,6 +128,7 @@ describe('App', () => {
     expect(screen.getByText((_, element) => element?.textContent === 'Last key: 1')).toBeInTheDocument()
     expect(screen.getByText('Try again')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+    expect(screen.getByRole('button', { name: '1' })).toHaveClass('key-button--incorrect')
   })
 
   it('opens the parent drawer and switches the session language', async () => {
