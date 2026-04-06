@@ -226,7 +226,24 @@ describe('App', () => {
     expect(screen.getByText('Lesson')).toBeInTheDocument()
     expect(screen.getByText('Numbers')).toBeInTheDocument()
     expect(screen.getByText(/hint mode/i)).toBeInTheDocument()
-    expect(screen.getByText(/coming in phase 2/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /always/i })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /after mistake/i })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('updates cue mode from the parent drawer without resetting the lesson state', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: '1' }))
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+    await user.click(screen.getByRole('button', { name: /after mistake/i }))
+
+    expect(screen.getByRole('button', { name: /after mistake/i })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /always/i })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByLabelText(/numbers lesson/i)).toHaveAttribute('data-cue-mode', 'after-mistake')
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: 1')).toBeInTheDocument()
+    expect(screen.getByText('Try again')).toBeInTheDocument()
   })
 
   it('keeps the current lesson state when the parent drawer opens and closes', async () => {

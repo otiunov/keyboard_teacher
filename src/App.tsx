@@ -5,7 +5,13 @@ import {
   getNumberKeyPresentation,
   submitNumberAnswer,
 } from './lesson'
-import { getLanguageOptions, getSessionCopy, type Language } from './session'
+import {
+  getCueModeOptions,
+  getLanguageOptions,
+  getSessionCopy,
+  type CueMode,
+  type Language,
+} from './session'
 import { speakText } from './speech'
 
 const numberRows = [
@@ -16,6 +22,7 @@ const numberKeys = numberRows.flat()
 
 function App() {
   const [language, setLanguage] = useState<Language>('en')
+  const [cueMode, setCueMode] = useState<CueMode>('always')
   const [isParentDrawerOpen, setIsParentDrawerOpen] = useState(false)
   const [lesson, setLesson] = useState(() => createNumberLessonState())
   const advanceTimerRef = useRef<number | null>(null)
@@ -151,15 +158,25 @@ function App() {
 
             <fieldset className="parent-drawer__group parent-drawer__group--hint">
               <legend>Hint mode</legend>
-              <p className="parent-drawer__hint-placeholder" aria-disabled="true">
-                Coming in Phase 2
-              </p>
+              <div className="parent-drawer__choices">
+                {getCueModeOptions().map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className="parent-drawer__choice"
+                    aria-pressed={cueMode === option.value}
+                    onClick={() => setCueMode(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </fieldset>
           </div>
         </section>
       ) : null}
 
-      <section className="lesson-shell" aria-label="Numbers lesson">
+      <section className="lesson-shell" aria-label="Numbers lesson" data-cue-mode={cueMode}>
         <section
           className="prompt-beacon"
           role="region"
