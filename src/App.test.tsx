@@ -271,6 +271,22 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: '1' })).toHaveClass('key-button--incorrect')
   })
 
+  it('keeps the cue visible for retry attempts after it is revealed in after-mistake mode', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+    await user.click(screen.getByRole('button', { name: /after mistake/i }))
+    await user.click(screen.getByRole('button', { name: '1' }))
+    await user.click(screen.getByRole('button', { name: '2' }))
+
+    expect(screen.getByText('Try again')).toBeInTheDocument()
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: 2')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+    expect(screen.getByRole('button', { name: '2' })).toHaveClass('key-button--incorrect')
+  })
+
   it('resets the delayed cue back to hidden when the next prompt starts', async () => {
     random.mockReturnValueOnce(0.3).mockReturnValueOnce(0.8)
     vi.useFakeTimers()
