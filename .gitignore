@@ -1,0 +1,21 @@
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Environment and logs
+.env
+.env.*
+*.log
+
+# Node / web build outputs
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.nuxt/
+.svelte-kit/
+vite.svg
