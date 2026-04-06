@@ -1,0 +1,193 @@
+:root {
+  font-family: "Trebuchet MS", "Avenir Next", sans-serif;
+  color: #132238;
+  background:
+    radial-gradient(circle at top, #fff8d9 0%, #fef1b7 24%, #f7df83 55%, #f2cb67 100%);
+  line-height: 1.4;
+  font-weight: 400;
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.stage {
+  min-height: 100vh;
+  padding: 24px 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.lesson-shell {
+  width: min(100%, 1100px);
+  display: grid;
+  gap: 24px;
+}
+
+.parent-chip {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 30px rgba(104, 73, 4, 0.16);
+  color: #5f4b00;
+}
+
+.parent-chip__icon {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.parent-chip__label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.prompt-beacon {
+  background: rgba(255, 253, 244, 0.82);
+  border: 3px solid rgba(163, 116, 8, 0.18);
+  border-radius: 32px;
+  padding: 28px 20px 24px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(139, 89, 0, 0.18);
+}
+
+.prompt-beacon__eyebrow,
+.prompt-beacon__meta,
+.feedback-strip__label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+}
+
+.prompt-beacon__eyebrow {
+  margin: 0 0 10px;
+  color: #946b00;
+  font-weight: 700;
+}
+
+.prompt-beacon__target {
+  font-size: clamp(5rem, 15vw, 9rem);
+  line-height: 1;
+  font-weight: 900;
+  color: #1b2f46;
+  text-shadow: 0 8px 0 rgba(255, 255, 255, 0.5);
+}
+
+.prompt-beacon__meta {
+  margin: 12px 0 0;
+  color: #72603c;
+}
+
+.keyboard-field {
+  display: grid;
+  gap: 16px;
+}
+
+.keyboard-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.key-button {
+  min-height: 88px;
+  border: 0;
+  border-radius: 28px;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 900;
+  color: #18314b;
+  background: linear-gradient(180deg, #fffef7 0%, #ffefbd 100%);
+  box-shadow:
+    inset 0 -8px 0 rgba(195, 154, 44, 0.28),
+    0 18px 28px rgba(138, 94, 0, 0.18);
+}
+
+.key-button--highlighted-target {
+  background: linear-gradient(180deg, #fffdf6 0%, #ffd65a 100%);
+  outline: 4px solid rgba(255, 244, 148, 0.88);
+  box-shadow:
+    inset 0 -10px 0 rgba(194, 141, 0, 0.3),
+    0 0 0 8px rgba(255, 245, 191, 0.38),
+    0 18px 28px rgba(138, 94, 0, 0.22);
+}
+
+.feedback-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 24px;
+  background: rgba(255, 253, 244, 0.82);
+  border: 2px solid rgba(163, 116, 8, 0.14);
+  color: #29405b;
+}
+
+.feedback-strip p {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.feedback-strip__label {
+  margin-right: 8px;
+  color: #8d6d1c;
+}
+
+@media (max-width: 720px) {
+  .stage {
+    padding-top: 72px;
+  }
+
+  .lesson-shell {
+    gap: 18px;
+  }
+
+  .prompt-beacon {
+    border-radius: 24px;
+    padding: 24px 18px 20px;
+  }
+
+  .keyboard-row {
+    gap: 12px;
+  }
+
+  .key-button {
+    min-height: 72px;
+    border-radius: 22px;
+  }
+
+  .feedback-strip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

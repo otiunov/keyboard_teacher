@@ -19,3 +19,6 @@ coverage/
 .nuxt/
 .svelte-kit/
 vite.svg
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
