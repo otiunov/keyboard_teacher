@@ -3,6 +3,7 @@ import {
   advanceNumberLesson,
   createNumberLessonState,
   getNumberKeyPresentation,
+  syncNumberLessonCueMode,
   submitNumberAnswer,
 } from './lesson'
 import {
@@ -47,13 +48,13 @@ function App() {
     }
 
     advanceTimerRef.current = window.setTimeout(() => {
-      setLesson((current) => advanceNumberLesson(current))
+      setLesson((current) => advanceNumberLesson(current, Math.random, cueMode))
     }, 700)
-  }, [])
+  }, [cueMode])
 
   const handleKeyPress = useCallback((value: string) => {
     setLesson((current) => {
-      const next = submitNumberAnswer(current, value)
+      const next = submitNumberAnswer(current, value, cueMode)
 
       speakText(
         window.speechSynthesis,
@@ -68,7 +69,11 @@ function App() {
 
       return next
     })
-  }, [language, scheduleAdvance])
+  }, [cueMode, language, scheduleAdvance])
+
+  useEffect(() => {
+    setLesson((current) => syncNumberLessonCueMode(current, cueMode))
+  }, [cueMode])
 
   useEffect(() => {
     function handlePhysicalKeyboard(event: KeyboardEvent) {

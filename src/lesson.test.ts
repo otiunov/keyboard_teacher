@@ -72,4 +72,42 @@ describe('number lesson state', () => {
       feedbackState: 'correct',
     })
   })
+
+  it('hides the cue before the first attempt in after-mistake mode', () => {
+    const lesson = createNumberLessonState(() => 0.3, 'after-mistake')
+
+    expect(lesson.highlightedKey).toBeNull()
+    expect(getNumberKeyPresentation(lesson, '3')).toEqual({
+      isHighlighted: false,
+      feedbackState: 'idle',
+    })
+  })
+
+  it('reveals the cue after a wrong answer in after-mistake mode', () => {
+    const lesson = createNumberLessonState(() => 0.3, 'after-mistake')
+    const next = submitNumberAnswer(lesson, '1', 'after-mistake')
+
+    expect(next.highlightedKey).toBe('3')
+    expect(getNumberKeyPresentation(next, '3')).toEqual({
+      isHighlighted: true,
+      feedbackState: 'idle',
+    })
+    expect(getNumberKeyPresentation(next, '1')).toEqual({
+      isHighlighted: false,
+      feedbackState: 'incorrect',
+    })
+  })
+
+  it('resets the cue back to hidden on the next prompt in after-mistake mode', () => {
+    const lesson = createNumberLessonState(() => 0.3, 'after-mistake')
+    const answered = submitNumberAnswer(lesson, '3', 'after-mistake')
+    const advanced = advanceNumberLesson(answered, () => 0.8, 'after-mistake')
+
+    expect(advanced.target).toBe('8')
+    expect(advanced.highlightedKey).toBeNull()
+    expect(getNumberKeyPresentation(advanced, '8')).toEqual({
+      isHighlighted: false,
+      feedbackState: 'idle',
+    })
+  })
 })

@@ -169,4 +169,24 @@ test.describe('Phase 1 numbers lesson', () => {
         { text: 'Try again', lang: 'en-US' },
       ])
   })
+
+  test('hides the cue until after a mistake when after-mistake mode is selected', async ({
+    page,
+  }) => {
+    await openLesson(page)
+    const target = await readCurrentTarget(page)
+    const wrongKey = pickWrongKey(target)
+
+    await page.getByRole('button', { name: /open parent settings/i }).click()
+    await page.getByRole('button', { name: /after mistake/i }).click()
+    await page.getByRole('button', { name: /close parent settings/i }).click()
+
+    await expect(page.locator('.key-button--highlighted-target')).toHaveCount(0)
+
+    await page.getByRole('button', { name: wrongKey }).click()
+
+    await expect(page.locator('.feedback-strip')).toContainText('Try again')
+    await expect(page.getByRole('button', { name: target })).toHaveClass(/key-button--highlighted-target/)
+    await expect(page.getByRole('button', { name: wrongKey })).toHaveClass(/key-button--incorrect/)
+  })
 })

@@ -246,6 +246,49 @@ describe('App', () => {
     expect(screen.getByText('Try again')).toBeInTheDocument()
   })
 
+  it('hides the target cue before the first attempt in after-mistake mode', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+    await user.click(screen.getByRole('button', { name: /after mistake/i }))
+
+    expect(screen.queryByRole('button', { name: '3' })).not.toHaveClass('key-button--highlighted-target')
+  })
+
+  it('reveals the cue after a wrong answer in after-mistake mode', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+    await user.click(screen.getByRole('button', { name: /after mistake/i }))
+    await user.click(screen.getByRole('button', { name: '1' }))
+
+    expect(screen.getByText('Try again')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+    expect(screen.getByRole('button', { name: '1' })).toHaveClass('key-button--incorrect')
+  })
+
+  it('resets the delayed cue back to hidden when the next prompt starts', async () => {
+    random.mockReturnValueOnce(0.3).mockReturnValueOnce(0.8)
+    vi.useFakeTimers()
+
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: /open parent settings/i }))
+    fireEvent.click(screen.getByRole('button', { name: /after mistake/i }))
+    fireEvent.click(screen.getByRole('button', { name: '3' }))
+
+    await act(async () => {
+      vi.advanceTimersByTime(700)
+    })
+
+    expect(screen.getByRole('button', { name: '8' })).not.toHaveClass('key-button--highlighted-target')
+    expect(screen.getByText('Tap the glowing key')).toBeInTheDocument()
+  })
+
   it('keeps the current lesson state when the parent drawer opens and closes', async () => {
     const user = userEvent.setup()
 
