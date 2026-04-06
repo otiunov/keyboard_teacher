@@ -128,6 +128,11 @@ function App() {
             <legend>Lesson</legend>
             <p className="parent-drawer__static-value">Numbers</p>
           </fieldset>
+
+          <fieldset className="parent-drawer__group">
+            <legend>Hint mode</legend>
+            <p className="parent-drawer__static-value">Coming in Phase 2</p>
+          </fieldset>
         </section>
       ) : null}
 

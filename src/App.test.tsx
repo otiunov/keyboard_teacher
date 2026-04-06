@@ -137,6 +137,45 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: /close parent settings/i })).toBeInTheDocument()
   })
 
+  it('shows lesson and hint-mode sections in the parent drawer', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+
+    expect(screen.getByRole('region', { name: /lesson stage/i })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: /prompt beacon/i })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: /keyboard field/i })).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: /feedback strip/i })).toBeInTheDocument()
+    expect(screen.getByText('Language')).toBeInTheDocument()
+    expect(screen.getByText('Lesson')).toBeInTheDocument()
+    expect(screen.getByText('Numbers')).toBeInTheDocument()
+    expect(screen.getByText(/hint mode/i)).toBeInTheDocument()
+    expect(screen.getByText(/coming in phase 2/i)).toBeInTheDocument()
+  })
+
+  it('keeps the current lesson state when the parent drawer opens and closes', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: '1' }))
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+
+    expect(screen.getByRole('dialog', { name: /parent settings/i })).toBeInTheDocument()
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: 1')).toBeInTheDocument()
+    expect(screen.getByText('Try again')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+
+    await user.click(screen.getByRole('button', { name: /close parent settings/i }))
+
+    expect(screen.queryByRole('dialog', { name: /parent settings/i })).not.toBeInTheDocument()
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: 1')).toBeInTheDocument()
+    expect(screen.getByText('Try again')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+  })
+
   it('speaks the prompt using the selected session language', async () => {
     const user = userEvent.setup()
 
