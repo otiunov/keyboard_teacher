@@ -45,6 +45,14 @@ button {
   gap: 24px;
 }
 
+.lesson-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 24, 5, 0.18);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
 .parent-chip {
   position: absolute;
   top: 18px;
@@ -58,6 +66,7 @@ button {
   background: rgba(255, 255, 255, 0.88);
   box-shadow: 0 10px 30px rgba(104, 73, 4, 0.16);
   color: #5f4b00;
+  z-index: 3;
 }
 
 .parent-chip__icon {
@@ -69,6 +78,83 @@ button {
 .parent-chip__label {
   font-size: 0.95rem;
   font-weight: 700;
+}
+
+.parent-drawer {
+  position: absolute;
+  top: 78px;
+  right: 18px;
+  width: min(92vw, 340px);
+  padding: 18px;
+  border-radius: 28px;
+  background: rgba(255, 253, 244, 0.97);
+  border: 2px solid rgba(163, 116, 8, 0.18);
+  box-shadow: 0 20px 40px rgba(104, 73, 4, 0.22);
+  z-index: 2;
+}
+
+.parent-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.parent-drawer__header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #1b2f46;
+}
+
+.parent-drawer__close {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #1b2f46;
+  color: #fff;
+  font-weight: 700;
+}
+
+.parent-drawer__group {
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+}
+
+.parent-drawer__group legend {
+  margin-bottom: 10px;
+  color: #946b00;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+}
+
+.parent-drawer__choices {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.parent-drawer__choice {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: #f4e29d;
+  color: #433000;
+  font-weight: 800;
+}
+
+.parent-drawer__choice[aria-pressed='true'] {
+  background: #1b2f46;
+  color: #fff;
+}
+
+.parent-drawer__static-value {
+  margin: 0;
+  color: #1b2f46;
+  font-weight: 800;
 }
 
 .prompt-beacon {
@@ -189,5 +275,13 @@ button {
   .feedback-strip {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .parent-drawer {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto;
   }
 }
