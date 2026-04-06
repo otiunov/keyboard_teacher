@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getLanguageOptions, getSessionCopy, type Language } from './session'
+import { speakText } from './speech'
 type KeyState = 'idle' | 'highlighted-target'
 
 const numberRows = [
@@ -13,6 +14,16 @@ function App() {
   const currentTarget = '3'
 
   const copy = getSessionCopy(language)
+
+  useEffect(() => {
+    speakText(window.speechSynthesis, window.SpeechSynthesisUtterance, currentTarget, language)
+  }, [currentTarget, language])
+
+  function handleKeyPress(value: string) {
+    const spokenFeedback = value === currentTarget ? 'Good job' : 'Try again'
+
+    speakText(window.speechSynthesis, window.SpeechSynthesisUtterance, spokenFeedback, language)
+  }
 
   return (
     <main className="stage">
@@ -103,6 +114,7 @@ function App() {
                     key={value}
                     className={`key-button key-button--${state}`}
                     type="button"
+                    onClick={() => handleKeyPress(value)}
                   >
                     {value}
                   </button>
