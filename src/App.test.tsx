@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
 
@@ -16,10 +16,14 @@ describe('App', () => {
   const originalSpeechSynthesisUtterance = window.SpeechSynthesisUtterance
   const speak = vi.fn()
   const cancel = vi.fn()
+  const random = vi.spyOn(Math, 'random')
 
   beforeEach(() => {
+    vi.useRealTimers()
     speak.mockReset()
     cancel.mockReset()
+    random.mockReset()
+    random.mockReturnValue(0.3)
 
     Object.defineProperty(window, 'speechSynthesis', {
       configurable: true,
@@ -33,6 +37,10 @@ describe('App', () => {
       configurable: true,
       value: MockSpeechSynthesisUtterance,
     })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   afterAll(() => {
@@ -85,6 +93,8 @@ describe('App', () => {
         lang: 'en-US',
       }),
     )
+    expect(screen.getByText(/last key:/i).parentElement).toHaveTextContent('Last key: 3')
+    expect(screen.getByText('Good job')).toBeInTheDocument()
   })
 
   it('speaks retry encouragement after the child clicks the wrong key', async () => {
@@ -103,6 +113,9 @@ describe('App', () => {
         lang: 'en-US',
       }),
     )
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: 1')).toBeInTheDocument()
+    expect(screen.getByText('Try again')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
   })
 
   it('opens the parent drawer and switches the session language', async () => {
@@ -141,5 +154,29 @@ describe('App', () => {
         lang: 'pl-PL',
       }),
     )
+  })
+
+  it('advances to a new prompt after a short delay when the answer is correct', async () => {
+    random.mockReturnValueOnce(0.3).mockReturnValueOnce(0.8)
+    vi.useFakeTimers()
+
+    render(<App />)
+    speak.mockClear()
+    cancel.mockClear()
+
+    fireEvent.click(screen.getByRole('button', { name: '3' }))
+
+    expect(screen.getByText((_, element) => element?.textContent?.replace(/\s+/g, ' ').trim() === 'Last key: 3')).toBeInTheDocument()
+    expect(screen.getByText('Good job')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+
+    await act(async () => {
+      vi.advanceTimersByTime(700)
+    })
+
+    expect(screen.getByRole('button', { name: '8' })).toHaveClass('key-button--highlighted-target')
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--idle')
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: -')).toBeInTheDocument()
+    expect(screen.getByText('Tap the glowing key')).toBeInTheDocument()
   })
 })

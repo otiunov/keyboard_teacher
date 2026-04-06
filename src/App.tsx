@@ -1,6 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import {
+  advanceNumberLesson,
+  createNumberLessonState,
+  submitNumberAnswer,
+} from './lesson'
 import { getLanguageOptions, getSessionCopy, type Language } from './session'
 import { speakText } from './speech'
+
 type KeyState = 'idle' | 'highlighted-target'
 
 const numberRows = [
@@ -11,18 +17,50 @@ const numberRows = [
 function App() {
   const [language, setLanguage] = useState<Language>('en')
   const [isParentDrawerOpen, setIsParentDrawerOpen] = useState(false)
-  const currentTarget = '3'
+  const [lesson, setLesson] = useState(() => createNumberLessonState())
+  const advanceTimerRef = useRef<number | null>(null)
 
   const copy = getSessionCopy(language)
 
   useEffect(() => {
-    speakText(window.speechSynthesis, window.SpeechSynthesisUtterance, currentTarget, language)
-  }, [currentTarget, language])
+    speakText(window.speechSynthesis, window.SpeechSynthesisUtterance, lesson.target, language)
+  }, [lesson.target, language])
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current !== null) {
+        window.clearTimeout(advanceTimerRef.current)
+      }
+    }
+  }, [])
+
+  function scheduleAdvance() {
+    if (advanceTimerRef.current !== null) {
+      window.clearTimeout(advanceTimerRef.current)
+    }
+
+    advanceTimerRef.current = window.setTimeout(() => {
+      setLesson((current) => advanceNumberLesson(current))
+    }, 700)
+  }
 
   function handleKeyPress(value: string) {
-    const spokenFeedback = value === currentTarget ? 'Good job' : 'Try again'
+    setLesson((current) => {
+      const next = submitNumberAnswer(current, value)
 
-    speakText(window.speechSynthesis, window.SpeechSynthesisUtterance, spokenFeedback, language)
+      speakText(
+        window.speechSynthesis,
+        window.SpeechSynthesisUtterance,
+        next.feedback,
+        language,
+      )
+
+      if (next.pendingAdvance) {
+        scheduleAdvance()
+      }
+
+      return next
+    })
   }
 
   return (
@@ -97,7 +135,7 @@ function App() {
         <header className="prompt-beacon">
           <p className="prompt-beacon__eyebrow">{copy.eyebrow}</p>
           <div className="prompt-beacon__target" aria-live="polite">
-            {currentTarget}
+            {lesson.target}
           </div>
           <p className="prompt-beacon__meta">{copy.meta}</p>
         </header>
@@ -107,7 +145,7 @@ function App() {
             <div className="keyboard-row" key={rowIndex}>
               {row.map((value) => {
                 const state: KeyState =
-                  value === currentTarget ? 'highlighted-target' : 'idle'
+                  value === lesson.target ? 'highlighted-target' : 'idle'
 
                 return (
                   <button
@@ -126,9 +164,10 @@ function App() {
 
         <section className="feedback-strip" aria-live="polite">
           <p>
-            <span className="feedback-strip__label">Last key:</span> -
+            <span className="feedback-strip__label">Last key:</span>{' '}
+            {lesson.lastKey ?? '-'}
           </p>
-          <p>Tap the glowing key</p>
+          <p>{lesson.feedback}</p>
         </section>
       </section>
     </main>
