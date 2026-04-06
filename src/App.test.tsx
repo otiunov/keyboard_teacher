@@ -208,6 +208,30 @@ describe('App', () => {
     )
   })
 
+  it('keeps the current target and feedback when the language changes mid-round', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+    speak.mockClear()
+    cancel.mockClear()
+
+    await user.click(screen.getByRole('button', { name: '1' }))
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+    await user.click(screen.getByRole('button', { name: /polish/i }))
+
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: 1')).toBeInTheDocument()
+    expect(screen.getByText('Try again')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+    expect(screen.getByRole('button', { name: '1' })).toHaveClass('key-button--incorrect')
+    expect(speak).toHaveBeenCalledTimes(2)
+    expect(speak).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        text: '3',
+        lang: 'pl-PL',
+      }),
+    )
+  })
+
   it('advances to a new prompt after a short delay when the answer is correct', async () => {
     random.mockReturnValueOnce(0.3).mockReturnValueOnce(0.8)
     vi.useFakeTimers()
@@ -230,5 +254,36 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--idle')
     expect(screen.getByText((_, element) => element?.textContent === 'Last key: -')).toBeInTheDocument()
     expect(screen.getByText('Tap the glowing key')).toBeInTheDocument()
+  })
+
+  it('speaks the next target when the lesson advances after a correct answer', async () => {
+    random.mockReturnValueOnce(0.3).mockReturnValueOnce(0.8)
+    vi.useFakeTimers()
+
+    render(<App />)
+    speak.mockClear()
+    cancel.mockClear()
+
+    fireEvent.click(screen.getByRole('button', { name: '3' }))
+
+    expect(speak).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        text: 'Good job',
+        lang: 'en-US',
+      }),
+    )
+
+    await act(async () => {
+      vi.advanceTimersByTime(700)
+    })
+
+    expect(speak).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        text: '8',
+        lang: 'en-US',
+      }),
+    )
   })
 })
