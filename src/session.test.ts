@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getLanguageOptions, getSessionCopy } from './session'
+import { getCueModeOptions, getLanguageOptions, getSessionCopy } from './session'
 
 describe('session copy', () => {
   it('exposes the parent language choices and visible header labels', () => {
@@ -17,5 +17,12 @@ describe('session copy', () => {
       eyebrow: 'Znajdź tę liczbę',
       meta: 'Polish · Numbers',
     })
+  })
+
+  it('exposes the phase 2 cue-mode choices', () => {
+    expect(getCueModeOptions()).toEqual([
+      { value: 'always', label: 'Always' },
+      { value: 'after-mistake', label: 'After mistake' },
+    ])
   })
 })
