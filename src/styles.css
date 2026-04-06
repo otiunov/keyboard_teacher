@@ -59,13 +59,14 @@ button {
   right: 18px;
   border: 0;
   border-radius: 999px;
-  padding: 10px 16px;
+  padding: 9px 14px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 10px 30px rgba(104, 73, 4, 0.16);
-  color: #5f4b00;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 8px 20px rgba(104, 73, 4, 0.12);
+  color: #6e5c23;
+  backdrop-filter: blur(12px);
   z-index: 3;
 }
 
@@ -85,12 +86,19 @@ button {
   top: 78px;
   right: 18px;
   width: min(92vw, 340px);
-  padding: 18px;
   border-radius: 28px;
-  background: rgba(255, 253, 244, 0.97);
-  border: 2px solid rgba(163, 116, 8, 0.18);
-  box-shadow: 0 20px 40px rgba(104, 73, 4, 0.22);
+  background: rgba(255, 253, 244, 0.94);
+  border: 1px solid rgba(163, 116, 8, 0.16);
+  box-shadow: 0 24px 48px rgba(104, 73, 4, 0.22);
+  overflow: hidden;
   z-index: 2;
+}
+
+.parent-drawer__surface {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(251, 245, 222, 0.4));
 }
 
 .parent-drawer__header {
@@ -98,7 +106,15 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+}
+
+.parent-drawer__eyebrow {
+  margin: 0 0 4px;
+  color: #946b00;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .parent-drawer__header h2 {
@@ -118,8 +134,10 @@ button {
 
 .parent-drawer__group {
   margin: 0 0 16px;
-  padding: 0;
-  border: 0;
+  padding: 14px 14px 12px;
+  border: 1px solid rgba(163, 116, 8, 0.12);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
 }
 
 .parent-drawer__group legend {
@@ -155,6 +173,19 @@ button {
   margin: 0;
   color: #1b2f46;
   font-weight: 800;
+}
+
+.parent-drawer__group--hint {
+  margin-bottom: 0;
+}
+
+.parent-drawer__hint-placeholder {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(240, 228, 188, 0.72);
+  color: #6b5b2f;
+  font-weight: 700;
 }
 
 .prompt-beacon {
@@ -247,6 +278,18 @@ button {
 .feedback-strip__label {
   margin-right: 8px;
   color: #8d6d1c;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 720px) {

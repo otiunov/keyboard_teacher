@@ -144,7 +144,7 @@ describe('App', () => {
 
     await user.click(screen.getByRole('button', { name: /open parent settings/i }))
 
-    expect(screen.getByRole('region', { name: /lesson stage/i })).toBeInTheDocument()
+    expect(screen.getByRole('main', { name: /lesson stage/i })).toBeInTheDocument()
     expect(screen.getByRole('region', { name: /prompt beacon/i })).toBeInTheDocument()
     expect(screen.getByRole('region', { name: /keyboard field/i })).toBeInTheDocument()
     expect(screen.getByRole('status', { name: /feedback strip/i })).toBeInTheDocument()

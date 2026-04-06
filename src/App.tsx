@@ -64,7 +64,7 @@ function App() {
   }
 
   return (
-    <main className="stage">
+    <main className="stage" aria-label="Lesson stage">
       <button
         className="parent-chip"
         type="button"
@@ -95,57 +95,83 @@ function App() {
           aria-modal="true"
           aria-label="Parent settings"
         >
-          <header className="parent-drawer__header">
-            <h2>Parent settings</h2>
-            <button
-              className="parent-drawer__close"
-              type="button"
-              aria-label="Close parent settings"
-              onClick={() => setIsParentDrawerOpen(false)}
-            >
-              Close
-            </button>
-          </header>
+          <div className="parent-drawer__surface">
+            <header className="parent-drawer__header">
+              <div>
+                <p className="parent-drawer__eyebrow">Parent settings</p>
+                <h2>Lesson setup</h2>
+              </div>
+              <button
+                className="parent-drawer__close"
+                type="button"
+                aria-label="Close parent settings"
+                onClick={() => setIsParentDrawerOpen(false)}
+              >
+                Close
+              </button>
+            </header>
 
-          <fieldset className="parent-drawer__group">
-            <legend>Language</legend>
-            <div className="parent-drawer__choices">
-              {getLanguageOptions().map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  className="parent-drawer__choice"
-                  aria-pressed={language === option.value}
-                  onClick={() => setLanguage(option.value)}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </fieldset>
+            <fieldset className="parent-drawer__group">
+              <legend>Language</legend>
+              <div className="parent-drawer__choices">
+                {getLanguageOptions().map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className="parent-drawer__choice"
+                    aria-pressed={language === option.value}
+                    onClick={() => setLanguage(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
 
-          <fieldset className="parent-drawer__group">
-            <legend>Lesson</legend>
-            <p className="parent-drawer__static-value">Numbers</p>
-          </fieldset>
+            <fieldset className="parent-drawer__group">
+              <legend>Lesson</legend>
+              <p className="parent-drawer__static-value">Numbers</p>
+            </fieldset>
 
-          <fieldset className="parent-drawer__group">
-            <legend>Hint mode</legend>
-            <p className="parent-drawer__static-value">Coming in Phase 2</p>
-          </fieldset>
+            <fieldset className="parent-drawer__group parent-drawer__group--hint">
+              <legend>Hint mode</legend>
+              <p className="parent-drawer__hint-placeholder" aria-disabled="true">
+                Coming in Phase 2
+              </p>
+            </fieldset>
+          </div>
         </section>
       ) : null}
 
       <section className="lesson-shell" aria-label="Numbers lesson">
-        <header className="prompt-beacon">
-          <p className="prompt-beacon__eyebrow">{copy.eyebrow}</p>
+        <section
+          className="prompt-beacon"
+          role="region"
+          aria-labelledby="prompt-beacon-title"
+          aria-describedby="prompt-beacon-meta"
+        >
+          <h2 className="sr-only" id="prompt-beacon-title">
+            Prompt beacon
+          </h2>
+          <p className="prompt-beacon__eyebrow">
+            {copy.eyebrow}
+          </p>
           <div className="prompt-beacon__target" aria-live="polite">
             {lesson.target}
           </div>
-          <p className="prompt-beacon__meta">{copy.meta}</p>
-        </header>
+          <p className="prompt-beacon__meta" id="prompt-beacon-meta">
+            {copy.meta}
+          </p>
+        </section>
 
-        <section className="keyboard-field" aria-label="Number keyboard">
+        <section
+          className="keyboard-field"
+          role="region"
+          aria-labelledby="keyboard-field-title"
+        >
+          <h2 className="sr-only" id="keyboard-field-title">
+            Keyboard field
+          </h2>
           {numberRows.map((row, rowIndex) => (
             <div className="keyboard-row" key={rowIndex}>
               {row.map((value) => {
@@ -167,7 +193,15 @@ function App() {
           ))}
         </section>
 
-        <section className="feedback-strip" aria-live="polite">
+        <section
+          className="feedback-strip"
+          role="status"
+          aria-labelledby="feedback-strip-title"
+          aria-live="polite"
+        >
+          <h2 className="sr-only" id="feedback-strip-title">
+            Feedback strip
+          </h2>
           <p>
             <span className="feedback-strip__label">Last key:</span>{' '}
             {lesson.lastKey ?? '-'}
