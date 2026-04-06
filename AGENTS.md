@@ -36,6 +36,66 @@ The app should stay child-first:
 - Keep the app as a single-route, single-screen experience unless the product direction changes explicitly.
 - Preserve the approved child-first layout and drawer-based parent controls.
 
+## GitHub issue workflow
+
+Before starting a new phase or large feature, create GitHub issues first.
+
+- Create one parent tracker issue for the phase.
+- Create dependency-ordered child issues for implementation slices.
+- Reference the parent PRD issue `#1` and the phase tracker in each child issue.
+
+Use the established labels and milestone pattern:
+
+- parent PRD issues: `prd`
+- implementation issues: `enhancement`, `afk`, and the phase label
+- phase labels currently in use:
+  - `phase:1`
+  - `phase:2`
+- create a dedicated milestone for each phase and assign the child issues to it
+- the parent phase tracker can carry only the phase label without the milestone
+
+Keep issues vertically sliced:
+
+- one issue should produce one meaningful, independently shippable behavior change
+- verification-only work can be its own issue at the end of the phase
+
+## Development workflow
+
+Default development mode in this repo:
+
+1. start from the next GitHub issue in dependency order
+2. use TDD:
+   - add or update the smallest failing test
+   - implement the minimal change
+   - refactor only after green
+3. use subagents for bounded parallel help:
+   - explorer subagents for codebase questions or risk checks
+   - do not delegate the main critical-path implementation blindly
+4. run full verification before closing the issue
+5. make one commit per completed issue and push it
+6. after the push succeeds, update the related GitHub issue status/comments so GitHub reflects the delivered state
+
+Commit style used in this repo:
+
+- one commit per finished task or issue slice
+- commit message should describe the delivered behavior, not the internal refactor
+
+After pushing:
+
+- update the corresponding GitHub issue
+- note the shipped commit id
+- note the verification commands that were run
+- keep issue status in sync with what is actually on `main`
+
+## Testing expectations
+
+Use both app-level and browser-level verification.
+
+- Vitest is the default red-green loop for model and app behavior
+- Playwright is required for end-to-end validation of shipped lesson flows
+- when a feature changes user-visible interaction, update or add Playwright coverage in [`tests/e2e/phase1-numbers.spec.ts`](/Users/alext/Projects/CLAUDE_PROJECTS/keyboard_teacher/tests/e2e/phase1-numbers.spec.ts) or the relevant future E2E spec
+- keep Vitest scoped to repo tests only; do not let dependency tests under `node_modules` leak into the suite
+
 ## Verification expectations
 
 Before closing a feature, run:
