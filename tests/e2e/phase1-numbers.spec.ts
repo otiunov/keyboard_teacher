@@ -148,4 +148,25 @@ test.describe('Phase 1 numbers lesson', () => {
         { text: target, lang: 'pl-PL' },
       ])
   })
+
+  test('accepts physical keyboard number input with the same feedback as on-screen keys', async ({
+    page,
+  }) => {
+    await openLesson(page)
+    const target = await readCurrentTarget(page)
+    const wrongKey = pickWrongKey(target)
+
+    await page.keyboard.press(wrongKey)
+
+    await expect(page.locator('.feedback-strip')).toContainText('Try again')
+    await expect(page.locator('.feedback-strip')).toContainText(`Last key: ${wrongKey}`)
+    await expect(page.getByRole('button', { name: target })).toHaveClass(/key-button--highlighted-target/)
+    await expect(page.getByRole('button', { name: wrongKey })).toHaveClass(/key-button--incorrect/)
+    await expect
+      .poll(async () => readSpeechCalls(page))
+      .toEqual([
+        { text: target, lang: 'en-US' },
+        { text: 'Try again', lang: 'en-US' },
+      ])
+  })
 })

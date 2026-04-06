@@ -131,6 +131,67 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: '1' })).toHaveClass('key-button--incorrect')
   })
 
+  it('handles physical number key presses through the same lesson flow', () => {
+    render(<App />)
+    speak.mockClear()
+    cancel.mockClear()
+
+    fireEvent.keyDown(window, { key: '1' })
+
+    expect(speak).toHaveBeenCalledTimes(1)
+    expect(speak).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: 'Try again',
+        lang: 'en-US',
+      }),
+    )
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: 1')).toBeInTheDocument()
+    expect(screen.getByText('Try again')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+    expect(screen.getByRole('button', { name: '1' })).toHaveClass('key-button--incorrect')
+  })
+
+  it('ignores non-number physical keyboard input', () => {
+    render(<App />)
+    speak.mockClear()
+    cancel.mockClear()
+
+    fireEvent.keyDown(window, { key: 'a' })
+
+    expect(speak).not.toHaveBeenCalled()
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: -')).toBeInTheDocument()
+    expect(screen.getByText('Tap the glowing key')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '3' })).toHaveClass('key-button--highlighted-target')
+  })
+
+  it('ignores physical keyboard lesson input while the parent drawer is open', async () => {
+    const user = userEvent.setup()
+
+    render(<App />)
+    speak.mockClear()
+    cancel.mockClear()
+
+    await user.click(screen.getByRole('button', { name: /open parent settings/i }))
+    fireEvent.keyDown(window, { key: '1' })
+
+    expect(speak).not.toHaveBeenCalled()
+    expect(screen.getByRole('dialog', { name: /parent settings/i })).toBeInTheDocument()
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: -')).toBeInTheDocument()
+    expect(screen.getByText('Tap the glowing key')).toBeInTheDocument()
+  })
+
+  it('ignores repeated physical keyboard events', () => {
+    render(<App />)
+    speak.mockClear()
+    cancel.mockClear()
+
+    fireEvent.keyDown(window, { key: '1', repeat: true })
+
+    expect(speak).not.toHaveBeenCalled()
+    expect(screen.getByText((_, element) => element?.textContent === 'Last key: -')).toBeInTheDocument()
+    expect(screen.getByText('Tap the glowing key')).toBeInTheDocument()
+  })
+
   it('opens the parent drawer and switches the session language', async () => {
     const user = userEvent.setup()
 

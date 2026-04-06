@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   advanceNumberLesson,
   createNumberLessonState,
@@ -12,6 +12,7 @@ const numberRows = [
   ['1', '2', '3', '4', '5'],
   ['6', '7', '8', '9', '0'],
 ]
+const numberKeys = numberRows.flat()
 
 function App() {
   const [language, setLanguage] = useState<Language>('en')
@@ -33,7 +34,7 @@ function App() {
     }
   }, [])
 
-  function scheduleAdvance() {
+  const scheduleAdvance = useCallback(() => {
     if (advanceTimerRef.current !== null) {
       window.clearTimeout(advanceTimerRef.current)
     }
@@ -41,9 +42,9 @@ function App() {
     advanceTimerRef.current = window.setTimeout(() => {
       setLesson((current) => advanceNumberLesson(current))
     }, 700)
-  }
+  }, [])
 
-  function handleKeyPress(value: string) {
+  const handleKeyPress = useCallback((value: string) => {
     setLesson((current) => {
       const next = submitNumberAnswer(current, value)
 
@@ -60,7 +61,23 @@ function App() {
 
       return next
     })
-  }
+  }, [language, scheduleAdvance])
+
+  useEffect(() => {
+    function handlePhysicalKeyboard(event: KeyboardEvent) {
+      if (isParentDrawerOpen || event.repeat || !numberKeys.includes(event.key)) {
+        return
+      }
+
+      handleKeyPress(event.key)
+    }
+
+    window.addEventListener('keydown', handlePhysicalKeyboard)
+
+    return () => {
+      window.removeEventListener('keydown', handlePhysicalKeyboard)
+    }
+  }, [handleKeyPress, isParentDrawerOpen])
 
   return (
     <main className="stage" aria-label="Lesson stage">
