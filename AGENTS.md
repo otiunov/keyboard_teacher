@@ -86,6 +86,28 @@ After pushing:
 - note the shipped commit id
 - note the verification commands that were run
 - keep issue status in sync with what is actually on `main`
+- explicitly record acceptance-criteria status on the issue
+- if the issue body checkboxes are not being edited directly, add a comment that maps each acceptance criterion to the shipped behavior
+- for parent phase issues, add a status comment that summarizes which child issues are shipped and whether the phase-level acceptance criteria are satisfied
+
+Acceptance status template for shipped issues:
+
+```md
+Acceptance criteria status: satisfied on `main`.
+
+Shipped in:
+- `<commit>` `<message>`
+
+Acceptance mapping:
+- criterion 1 -> shipped behavior
+- criterion 2 -> shipped behavior
+
+Verification:
+- `npm run lint`
+- `npm run test`
+- `npm run build`
+- `npm run test:e2e`
+```
 
 ## Testing expectations
 
